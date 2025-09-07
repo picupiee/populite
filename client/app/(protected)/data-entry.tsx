@@ -5,12 +5,15 @@ import {
   TextInput,
   Switch,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface FormData {
   fullname: string;
@@ -95,9 +98,14 @@ export default function DataEntryScreen() {
       contentContainerStyle={{ padding: 20 }}
       className="flex-1 bg-gray-200"
     >
-      <Text className="text-3xl font-bold mb-6 text-center">
-        Formulir Data Penduduk
-      </Text>
+      <View className="flex-row justify-start items-center md:space-x-4 space-x-2 mb-6">
+        <Pressable onPress={() => router.replace("/home")}>
+          <MaterialIcons name="arrow-circle-left" size={32} color="black" />
+        </Pressable>
+        <Text className="text-2xl md:text-3xl font-bold text-center">
+          Formulir Data Penduduk
+        </Text>
+      </View>
 
       <View>
         <Text className="text-lg font-bold mt-4 mb-2">Nama Lengkap</Text>
@@ -107,7 +115,11 @@ export default function DataEntryScreen() {
           rules={{ required: true }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="w-full h-12 border border-gray-300 rounded-md px-4"
+              className={
+                errors.fullname
+                  ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
+                  : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+              } // original style = "w-full h-12 border border-gray-300 rounded-md px-4"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -124,48 +136,80 @@ export default function DataEntryScreen() {
           name="occupancy"
           rules={{ required: true }}
           render={({ field: { onChange, value } }) => (
-            <View className="border border-gray-300 rounded-md">
-              <Picker selectedValue={value} onValueChange={onChange}>
+            <View>
+              <Picker
+                selectedValue={value}
+                onValueChange={onChange}
+                className={
+                  errors.occupancy
+                    ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
+                    : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                }
+              >
                 <Picker.Item label="Pilih Salah Satu" value="" />
                 <Picker.Item label="Pemilik" value="pemilik" />
                 <Picker.Item label="Sewa/Indekos" value="penyewa" />
                 <Picker.Item label="Kosong" value="kosong" />
               </Picker>
+              {errors.occupancy && (
+                <Text className="text-red-500">
+                  Status Hunian Wajib Dipilih
+                </Text>
+              )}
             </View>
           )}
         />
 
         <Text className="text-lg font-bold mt-4 mb-2">Jalan dan Blok</Text>
-        <Controller
-          control={control}
-          name="street"
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => (
-            <View className="border border-gray-300 rounded-md mb-2">
-              <Picker selectedValue={value} onValueChange={onChange}>
-                <Picker.Item label="Pilih Salah Satu" value="" />
-                <Picker.Item label="Gang Mawar" value="Mawar" />
-                <Picker.Item label="Gang Edelweis" value="Edelweis" />
-                <Picker.Item label="Gang Pinus" value="Pinus" />
-              </Picker>
-            </View>
+        <View className="flex-row justify-between">
+          <Controller
+            control={control}
+            name="street"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <View className="border border-gray-300 rounded-md mb-2">
+                <Picker
+                  selectedValue={value}
+                  onValueChange={onChange}
+                  className={
+                    errors.street
+                      ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
+                      : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                  }
+                >
+                  <Picker.Item label="Pilih Salah Satu" value="" />
+                  <Picker.Item label="Jalan Mawar" value="Mawar" />
+                  <Picker.Item label="Jalan Edelweis" value="Edelweis" />
+                  <Picker.Item label="Jalan Pinus" value="Pinus" />
+                </Picker>
+                {errors.street && (
+                  <Text className="text-red-500">Nama Jalan Wajib Dipilih</Text>
+                )}
+              </View>
+            )}
+          />
+          <Controller
+            control={control}
+            name="blockAndNumber"
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className={
+                  errors.blockAndNumber
+                    ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
+                    : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                }
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                placeholder="Contoh: C28 No. 26"
+              />
+            )}
+          />
+          {errors.blockAndNumber && (
+            <Text className="text-red-500">Nama Jalan Wajib Dipilih</Text>
           )}
-        />
-        <Controller
-          control={control}
-          name="blockAndNumber"
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full h-12 border border-gray-300 rounded-md px-4"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Contoh: C28 No. 26"
-            />
-          )}
-        />
-
+        </View>
         {/* Detail of People in the house */}
         <View className="flex-row justify-center items-center space-x-4 mt-4 mb-2">
           <Text className="text-lg font-bold">Total Penghuni</Text>
@@ -188,7 +232,7 @@ export default function DataEntryScreen() {
         </View>
 
         {/* Detail of people living in the house */}
-        <Text className="text-xs font-medium text-center outline outline-gray-300 outline-1 mb-1">
+        <Text className="text-md md:text-xs font-medium text-center outline outline-gray-300 outline-1 mb-1">
           Detail total penghuni
         </Text>
         <View className="flex-row justify-between">
@@ -206,7 +250,7 @@ export default function DataEntryScreen() {
                   rules={{ required: !isHouseEmpty }}
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      className="h-12 border border-gray-300 rounded-md px-4"
+                      className="h-12 border border-gray-300 rounded-md px-4 text-center"
                       onChangeText={(text) => onChange(parseInt(text) || 0)}
                       value={isHouseEmpty ? "0" : value?.toString()}
                       keyboardType="numeric"
@@ -226,7 +270,7 @@ export default function DataEntryScreen() {
                   rules={{ required: !isHouseEmpty }}
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      className="h-12 border border-gray-300 rounded-md px-4"
+                      className="h-12 border border-gray-300 rounded-md px-4 text-center"
                       onChangeText={(text) => onChange(parseInt(text) || 0)}
                       value={isHouseEmpty ? "0" : value?.toString()}
                       keyboardType="numeric"
@@ -254,7 +298,7 @@ export default function DataEntryScreen() {
                   rules={{ required: !isHouseEmpty }}
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      className="h-12 border border-gray-300 rounded-md px-4"
+                      className="h-12 border border-gray-300 rounded-md px-4 text-center"
                       onChangeText={(text) => onChange(parseInt(text) || 0)}
                       value={isHouseEmpty ? "0" : value?.toString()}
                       keyboardType="numeric"
@@ -274,7 +318,7 @@ export default function DataEntryScreen() {
                   rules={{ required: !isHouseEmpty }}
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      className="h-12 border border-gray-300 rounded-md px-4"
+                      className="h-12 border border-gray-300 rounded-md px-4 text-center"
                       onChangeText={(text) => onChange(parseInt(text) || 0)}
                       value={isHouseEmpty ? "0" : value?.toString()}
                       keyboardType="numeric"
