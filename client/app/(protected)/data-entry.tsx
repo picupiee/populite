@@ -1,0 +1,315 @@
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  Switch,
+  ScrollView,
+} from "react-native";
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface FormData {
+  fullname: string;
+  occupancy: string;
+  street: string;
+  blockAndNumber: string;
+  totalPeople: number;
+  adultsMale: number;
+  adultsFemale: number;
+  kidsMale: number;
+  kidsFemale: number;
+  isGunungSariResident: boolean;
+}
+
+export default function DataEntryScreen() {
+  const [loading, setLoading] = useState(false);
+  const defaultFormValues = {
+    fullname: "",
+    occupancy: "",
+    street: "",
+    blockAndNumber: "",
+    totalPeople: 0,
+    adultsMale: 0,
+    adultsFemale: 0,
+    kidsMale: 0,
+    kidsFemale: 0,
+    isGunungSariResident: false,
+  };
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({ defaultValues: defaultFormValues });
+
+  const occupancyStatus = watch("occupancy");
+  const isHouseEmpty = occupancyStatus === "kosong";
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found.");
+      }
+
+      const submissionData = {
+        ...data,
+        adults: {
+          total: (data.adultsMale || 0) + (data.adultsFemale || 0),
+          male: data.adultsMale,
+          female: data.adultsFemale,
+        },
+        kids: {
+          total: (data.kidsMale || 0) + (data.kidsFemale || 0),
+          male: data.kidsMale,
+          female: data.kidsFemale,
+        },
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/data",
+        submissionData,
+        {
+          headers: { "x-auth-token": token },
+        }
+      );
+
+      window.alert("Sukses! Data berhasil disimpan");
+      reset();
+    } catch (error) {
+      console.error(error);
+      window.alert("Error! Gagal menyimpan data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <ScrollView
+      contentContainerStyle={{ padding: 20 }}
+      className="flex-1 bg-gray-200"
+    >
+      <Text className="text-3xl font-bold mb-6 text-center">
+        Formulir Data Penduduk
+      </Text>
+
+      <View>
+        <Text className="text-lg font-bold mt-4 mb-2">Nama Lengkap</Text>
+        <Controller
+          control={control}
+          name="fullname"
+          rules={{ required: true }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              className="w-full h-12 border border-gray-300 rounded-md px-4"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+        {errors.fullname && (
+          <Text className="text-red-500">Nama wajib diisi.</Text>
+        )}
+
+        <Text className="text-lg font-bold mt-4 mb-2">Status Hunian</Text>
+        <Controller
+          control={control}
+          name="occupancy"
+          rules={{ required: true }}
+          render={({ field: { onChange, value } }) => (
+            <View className="border border-gray-300 rounded-md">
+              <Picker selectedValue={value} onValueChange={onChange}>
+                <Picker.Item label="Pilih Salah Satu" value="" />
+                <Picker.Item label="Pemilik" value="pemilik" />
+                <Picker.Item label="Sewa/Indekos" value="penyewa" />
+                <Picker.Item label="Kosong" value="kosong" />
+              </Picker>
+            </View>
+          )}
+        />
+
+        <Text className="text-lg font-bold mt-4 mb-2">Jalan dan Blok</Text>
+        <Controller
+          control={control}
+          name="street"
+          rules={{ required: true }}
+          render={({ field: { onChange, value } }) => (
+            <View className="border border-gray-300 rounded-md mb-2">
+              <Picker selectedValue={value} onValueChange={onChange}>
+                <Picker.Item label="Pilih Salah Satu" value="" />
+                <Picker.Item label="Gang Mawar" value="Mawar" />
+                <Picker.Item label="Gang Edelweis" value="Edelweis" />
+                <Picker.Item label="Gang Pinus" value="Pinus" />
+              </Picker>
+            </View>
+          )}
+        />
+        <Controller
+          control={control}
+          name="blockAndNumber"
+          rules={{ required: true }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              className="w-full h-12 border border-gray-300 rounded-md px-4"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Contoh: C28 No. 26"
+            />
+          )}
+        />
+
+        {/* Detail of People in the house */}
+        <View className="flex-row justify-center items-center space-x-4 mt-4 mb-2">
+          <Text className="text-lg font-bold">Total Penghuni</Text>
+          <Controller
+            control={control}
+            name="totalPeople"
+            rules={{ required: !isHouseEmpty }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="h-12 border border-gray-300 rounded-md px-2 w-14 text-center text-lg"
+                onBlur={onBlur}
+                onChangeText={(text) => onChange(parseInt(text) || 0)}
+                value={isHouseEmpty ? "0" : value?.toString()}
+                keyboardType="numeric"
+                editable={!isHouseEmpty}
+                style={{ backgroundColor: isHouseEmpty ? "#e5e7eb" : "#fff" }}
+              />
+            )}
+          />
+        </View>
+
+        {/* Detail of people living in the house */}
+        <Text className="text-xs font-medium text-center outline outline-gray-300 outline-1 mb-1">
+          Detail total penghuni
+        </Text>
+        <View className="flex-row justify-between">
+          {/* Dewasa */}
+          <View className="flex-1 border border-gray-300 bg-gray-100 px-2 pb-2 rounded-md">
+            <Text className="text-md font-bold mt-2 mb-2 text-center">
+              Dewasa
+            </Text>
+            <View className="flex-row justify-between space-x-2">
+              <View className="flex-1">
+                <Text className="text-xs text-center">Pria</Text>
+                <Controller
+                  control={control}
+                  name="adultsMale"
+                  rules={{ required: !isHouseEmpty }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="h-12 border border-gray-300 rounded-md px-4"
+                      onChangeText={(text) => onChange(parseInt(text) || 0)}
+                      value={isHouseEmpty ? "0" : value?.toString()}
+                      keyboardType="numeric"
+                      editable={!isHouseEmpty}
+                      style={{
+                        backgroundColor: isHouseEmpty ? "#e5e7eb" : "#fff",
+                      }}
+                    />
+                  )}
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs text-center">Wanita</Text>
+                <Controller
+                  control={control}
+                  name="adultsFemale"
+                  rules={{ required: !isHouseEmpty }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="h-12 border border-gray-300 rounded-md px-4"
+                      onChangeText={(text) => onChange(parseInt(text) || 0)}
+                      value={isHouseEmpty ? "0" : value?.toString()}
+                      keyboardType="numeric"
+                      editable={!isHouseEmpty}
+                      style={{
+                        backgroundColor: isHouseEmpty ? "#e5e7eb" : "#fff",
+                      }}
+                    />
+                  )}
+                />
+              </View>
+            </View>
+          </View>
+          {/* Anak-anak */}
+          <View className="flex-1 border border-gray-300 bg-gray-100 px-2 pb-2 rounded-md">
+            <Text className="text-md font-bold mt-2 mb-2 text-center">
+              Anak-Anak
+            </Text>
+            <View className="flex-row justify-between space-x-2">
+              <View className="flex-1">
+                <Text className="text-xs text-center">Laki-laki</Text>
+                <Controller
+                  control={control}
+                  name="kidsMale"
+                  rules={{ required: !isHouseEmpty }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="h-12 border border-gray-300 rounded-md px-4"
+                      onChangeText={(text) => onChange(parseInt(text) || 0)}
+                      value={isHouseEmpty ? "0" : value?.toString()}
+                      keyboardType="numeric"
+                      editable={!isHouseEmpty}
+                      style={{
+                        backgroundColor: isHouseEmpty ? "#e5e7eb" : "#fff",
+                      }}
+                    />
+                  )}
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs text-center">Perempuan</Text>
+                <Controller
+                  control={control}
+                  name="kidsFemale"
+                  rules={{ required: !isHouseEmpty }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="h-12 border border-gray-300 rounded-md px-4"
+                      onChangeText={(text) => onChange(parseInt(text) || 0)}
+                      value={isHouseEmpty ? "0" : value?.toString()}
+                      keyboardType="numeric"
+                      editable={!isHouseEmpty}
+                      style={{
+                        backgroundColor: isHouseEmpty ? "#e5e7eb" : "#fff",
+                      }}
+                    />
+                  )}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Check for National ID requirement */}
+        <Text className="text-lg font-bold mt-4 mb-2">
+          Apakah KTP tercatat di Desa Gunung Sari ?
+        </Text>
+        <Controller
+          control={control}
+          name="isGunungSariResident"
+          render={({ field: { onChange, value } }) => (
+            <Switch onValueChange={onChange} value={value} />
+          )}
+        />
+      </View>
+
+      <View className="mt-8">
+        <Button
+          title={loading ? "Menyimpan ..." : "Simpan Data"}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        />
+      </View>
+    </ScrollView>
+  );
+}
