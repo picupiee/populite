@@ -14,6 +14,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import API_BASE_URL from "@/config";
 
 interface FormData {
   fullname: string;
@@ -76,7 +77,7 @@ export default function DataEntryScreen() {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/data",
+        `${API_BASE_URL}/data`,
         submissionData,
         {
           headers: { "x-auth-token": token },

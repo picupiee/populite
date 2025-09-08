@@ -2,6 +2,7 @@ import { View, Text, ActivityIndicator, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_BASE_URL from "@/config";
 
 interface DataEntry {
   _id: string;
@@ -27,10 +28,9 @@ export default function ViewDataScreen() {
         if (!token) {
           throw new Error("No token found");
         }
-        const response = await axios.get<DataEntry[]>(
-          `http://192.168.1.5:5000/api/data`,
-          { headers: { "x-auth-token": token } }
-        );
+        const response = await axios.get<DataEntry[]>(`${API_BASE_URL}/data`, {
+          headers: { "x-auth-token": token },
+        });
         setData(response.data);
       } catch (error) {
         console.error("Error Fetching Data :", error);

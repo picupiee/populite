@@ -4,6 +4,7 @@ import { router } from "expo-router";
 // import * as SecureStore from "expo-secure-store"
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_BASE_URL from "@/config";
 
 // import { LoginResponse } from "@/types";
 // import SecureStore from 'expo-secure-store'
@@ -17,7 +18,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
+      const response = await axios.post(`${API_BASE_URL}/login`, {
         username,
         password,
       });

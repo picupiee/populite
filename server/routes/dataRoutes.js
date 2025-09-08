@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid"); // Generate Unique ID
 // @desc    Get all population data entry
 // @access  Private (required authentication)
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const entries = await DataEntry.find().sort({ createdAt: -1 });
     res.json(entries);

@@ -2,6 +2,7 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "@/config";
 
 interface PublicData {
   uid: string;
@@ -26,7 +27,7 @@ export default function PublicDataScreen() {
       }
       try {
         const response = await axios.get<PublicData>(
-          `http://192.168.1.5:5000/api/data/public/data/${uid}`
+          `${API_BASE_URL}/data/public/data/${uid}`
         );
         setData(response.data);
       } catch (error) {
