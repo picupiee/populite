@@ -35,7 +35,6 @@ export default function ViewDataScreen() {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
           throw new Error("No token found");
-          window.aler;
         }
         const response = await axios.get<DataEntry[]>(`${API_BASE_URL}/data`, {
           headers: { "x-auth-token": token },

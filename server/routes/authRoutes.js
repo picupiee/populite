@@ -31,7 +31,7 @@ router.post('/login', async(req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            {expiresIn: '5H'}, // token expired in 5 minutes, set it back to 1 hour if this function is valid
+            {expiresIn: '4H'}, // token expired in 5 minutes, set it back to 1 hour if this function is valid
             (err, token) => {
                 if (err) throw err;
                 res.json({token}); // send the token back to client
