@@ -1,8 +1,16 @@
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API_BASE_URL from "@/config";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 
 interface DataEntry {
   _id: string;
@@ -27,6 +35,7 @@ export default function ViewDataScreen() {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
           throw new Error("No token found");
+          window.aler;
         }
         const response = await axios.get<DataEntry[]>(`${API_BASE_URL}/data`, {
           headers: { "x-auth-token": token },
@@ -55,15 +64,28 @@ export default function ViewDataScreen() {
         <Text className="text-xl font-semibold">
           Tidak ada data yang tersedia
         </Text>
+        <Pressable
+          className="bg-blue-500 p-2 rounded-md mt-2"
+          onPress={() => router.replace("/home")}
+        >
+          <Text className="text-center text-white font-semibold">
+            Kembali Ke Menu Utama
+          </Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
     <ScrollView className="flex-1 p-4 bg-gray-100">
-      <Text className="text-2xl font-semibold underline underline-offset-4 mb-6 text-center">
-        Data Penduduk
-      </Text>
+      <View className="flex-row justify-start items-center md:space-x-4 space-x-2 mb-6">
+        <Pressable onPress={() => router.replace("/home")}>
+          <MaterialIcons name="arrow-circle-left" size={32} color="black" />
+        </Pressable>
+        <Text className="text-2xl font-semibold underline underline-offset-4 text-center">
+          Data Penduduk
+        </Text>
+      </View>
 
       {/* Table Header */}
       <View className="flex-row bg-gray-200 py-3 rounded-t-lg">
@@ -80,7 +102,7 @@ export default function ViewDataScreen() {
         >
           <Text className="flex-1 text-center">{item.fullname}</Text>
           <Text className="flex-1 text-center">{item.street}</Text>
-          <Text className="flex-1 text-center">{item.occupancy}</Text>
+          <Text className="flex-1 text-center uppercase">{item.occupancy}</Text>
           <Text className="flex-1 text-center">{item.totalPeople}</Text>
         </View>
       ))}

@@ -31,10 +31,11 @@ router.post('/login', async(req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            {expiresIn: '1h'}, // token expired in 1 hour
+            {expiresIn: '5H'}, // token expired in 5 minutes, set it back to 1 hour if this function is valid
             (err, token) => {
                 if (err) throw err;
                 res.json({token}); // send the token back to client
+                console.log(`User : ${username} with token : ${token}valid for for 5 minutes.\nTimestamp : ` + new Date().toLocaleTimeString())
             }
         );
     } catch (err) {
