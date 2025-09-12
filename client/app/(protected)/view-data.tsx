@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import API_BASE_URL from "@/config";
 
 interface DataEntry {
-  _id: string;
+  uid: string;
   fullname: string;
   occupancy: string;
   street: string;
@@ -75,12 +75,16 @@ export default function ViewDataScreen() {
       {/* Table Row */}
       {data.map((item, index) => (
         <View
-          key={item._id}
-          className={`flex-row border-b border-gray-300 py-3 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+          key={item.uid}
+          className={`flex-row border-b border-gray-300 py-3 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"} items-center`}
         >
           <Text className="flex-1 text-center">{item.fullname}</Text>
-          <Text className="flex-1 text-center">{item.street}</Text>
-          <Text className="flex-1 text-center">{item.occupancy}</Text>
+          <Text className="flex-1 text-center">
+            {item.street}
+            <br />
+            {item.blockAndNumber}
+          </Text>
+          <Text className="flex-1 text-center uppercase">{item.occupancy}</Text>
           <Text className="flex-1 text-center">{item.totalPeople}</Text>
         </View>
       ))}

@@ -76,4 +76,19 @@ router.get("/public/data/:uid", async (req, res) => {
   }
 });
 
+router.get("/data/:uid", auth, async (req, res) => {
+  try {
+    const uid = req.params.uid;
+    const data = await Data.findOne({ uid });
+
+    if (!data) {
+      return res.status(404).json({ msg: "Data not found" });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
 module.exports = router;
