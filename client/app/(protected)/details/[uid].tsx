@@ -33,7 +33,10 @@ export default function DetailPage() {
         const response = await axios.get<DataEntry>(
           `${API_BASE_URL}/data/${uid}`,
           {
-            headers: { "x-auth-token": token },
+            headers: {
+              "x-auth-token": token,
+              "ngrok-skip-browser-warning": "true",
+            },
           }
         );
         setData(response.data);

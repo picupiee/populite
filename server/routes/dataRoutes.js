@@ -13,8 +13,9 @@ router.get("/", auth, async (req, res) => {
     const entries = await DataEntry.find().sort({ createdAt: -1 });
     res.json(entries);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    console.error("Error fetching data:", err.message);
+    // Send a JSON response with a clear error message and an empty array
+    res.status(500).json({ msg: "Server Error", data: [] });
   }
 });
 
@@ -79,7 +80,7 @@ router.get("/public/data/:uid", async (req, res) => {
 router.get("/data/:uid", auth, async (req, res) => {
   try {
     const uid = req.params.uid;
-    const data = await Data.findOne({ uid });
+    const data = await DataEntry.findOne({ uid });
 
     if (!data) {
       return res.status(404).json({ msg: "Data not found" });

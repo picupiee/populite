@@ -37,8 +37,13 @@ export default function ViewDataScreen() {
           throw new Error("No token found");
         }
         const response = await axios.get<DataEntry[]>(`${API_BASE_URL}/data`, {
-          headers: { "x-auth-token": token },
+          headers: {
+            "x-auth-token": token,
+            "ngrok-skip-browser-warning": "true",
+          },
         });
+        console.log("Response data:", response.data);
+        console.log("Is response an array?", Array.isArray(response.data));
         setData(response.data);
       } catch (error) {
         console.error("Error Fetching Data :", error);

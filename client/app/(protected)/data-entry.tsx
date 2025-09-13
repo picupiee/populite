@@ -80,12 +80,17 @@ export default function DataEntryScreen() {
         `${API_BASE_URL}/data`,
         submissionData,
         {
-          headers: { "x-auth-token": token },
+          headers: {
+            "x-auth-token": token,
+            "ngrok-skip-browser-warning": "true",
+          },
         }
       );
 
-      window.alert("Sukses! Data berhasil disimpan");
-      reset();
+      window.alert(
+        "Sukses! Data berhasil disimpan.\nAnda akan diarahkan ke halaman Data Penduduk !"
+      );
+      router.push("/(protected)/view-data");
     } catch (error) {
       console.error(error);
       window.alert(`Error!\nGagal Menyimpan Data.\n\n${error}`);
@@ -191,7 +196,7 @@ export default function DataEntryScreen() {
               <Text className="text-red-500">Nama Jalan Wajib Dipilih</Text>
             )}
           </View>
-          <View className="">
+          <View className="min-w-fit">
             <Controller
               control={control}
               name="blockAndNumber"
@@ -200,13 +205,14 @@ export default function DataEntryScreen() {
                 <TextInput
                   className={
                     errors.blockAndNumber
-                      ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
-                      : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                      ? "border-red-500 bg-red-200 border w-12 h-12 rounded-md px-4 outline-none"
+                      : "border-gray-500 bg-gray-200 border w-40 md:w-full h-12 rounded-md px-4 outline-none"
                   }
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  placeholder="Contoh: C28 No. 26"
+                  maxLength={6}
+                  placeholder="Contoh: C28/26"
                 />
               )}
             />
