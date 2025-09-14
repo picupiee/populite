@@ -18,7 +18,6 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      console.log({ username, password });
       const response = await axios.post(`${API_BASE_URL}/login`, {
         username,
         password,
@@ -46,14 +45,16 @@ export default function LoginScreen() {
     <View className="flex-1 items-center justify-center bg-gray-400">
       <Text className="text-2xl font-bold text-gray-800 mb-6">Login</Text>
       <TextInput
-        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4"
+        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-gray-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
         placeholder="Username"
+        placeholderTextColor="#2e2e2e"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
-        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4"
+        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-gray-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
         placeholder="Password"
+        placeholderTextColor="#2e2e2e"
         secureTextEntry
         value={password}
         onChangeText={setPassword}

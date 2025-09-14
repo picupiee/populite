@@ -124,7 +124,7 @@ export default function DataEntryScreen() {
               className={
                 errors.fullname
                   ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
-                  : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                  : "border-gray-500 bg-gray-300 border w-full h-12 rounded-md px-4 outline-none focus:bg-white"
               } // original style = "w-full h-12 border border-gray-300 rounded-md px-4"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -149,7 +149,7 @@ export default function DataEntryScreen() {
                 className={
                   errors.occupancy
                     ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
-                    : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                    : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none focus:bg-white"
                 }
               >
                 <Picker.Item label="Pilih Salah Satu" value="" />
@@ -181,7 +181,7 @@ export default function DataEntryScreen() {
                     className={
                       errors.street
                         ? "border-red-500 bg-red-200 border w-full h-12 rounded-md px-4 outline-none"
-                        : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none"
+                        : "border-gray-500 bg-gray-200 border w-full h-12 rounded-md px-4 outline-none focus:bg-white"
                     }
                   >
                     <Picker.Item label="Pilih Salah Satu" value="" />
@@ -206,7 +206,7 @@ export default function DataEntryScreen() {
                   className={
                     errors.blockAndNumber
                       ? "border-red-500 bg-red-200 border w-12 h-12 rounded-md px-4 outline-none"
-                      : "border-gray-500 bg-gray-200 border w-40 md:w-full h-12 rounded-md px-4 outline-none"
+                      : "border-gray-500 bg-gray-200 border w-40 md:w-full h-12 rounded-md px-4 outline-none focus:bg-white"
                   }
                   onBlur={onBlur}
                   onChangeText={onChange}
