@@ -43,16 +43,19 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 items-center justify-center bg-gray-400">
-      <Text className="text-2xl font-bold text-gray-800 mb-6">Login</Text>
+      <Text className="text-xl font-bold text-gray-800 mb-2">
+        Pendataan Warga RT 003
+      </Text>
+      <Text className="text-lg font-bold text-gray-800 mb-6">Area Login</Text>
       <TextInput
-        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-gray-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
+        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-slate-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
         placeholder="Username"
         placeholderTextColor="#2e2e2e"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
-        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-gray-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
+        className="w-80 h-12 border border-gray-600 rounded-md px-4 mb-4 outline-none focus:bg-slate-300 placeholder:transition placeholder:ease-in-out placeholder:focus:translate-x-5 placeholder:focus:opacity-0"
         placeholder="Password"
         placeholderTextColor="#2e2e2e"
         secureTextEntry
